@@ -1,0 +1,816 @@
+/* ─── Design Tokens ────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+  --bg: #121212;
+  --bg2: #1a1a1a;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --lime: #CCFF00;
+  --lime-dim: rgba(204, 255, 0, 0.12);
+  --lime-glow: 0 0 20px rgba(204, 255, 0, 0.35);
+  --red: #FF3B5C;
+  --red-dim: rgba(255, 59, 92, 0.15);
+  --blue: #38BDF8;
+  --blue-dim: rgba(56, 189, 248, 0.15);
+  --text: #F0F0F0;
+  --text-sec: #777;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* ─── Reset & Base ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(204, 255, 0, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(56, 189, 248, 0.04) 0%, transparent 70%);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ─── Layout ───────────────────────────────────────────────────── */
+.app-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+}
+
+/* ─── Top Bar ──────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+header h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  background: linear-gradient(90deg, var(--lime), #88FF00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.room-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-sec);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 4px 12px;
+}
+
+.highlight-code {
+  font-family: 'Space Grotesk', monospace;
+  font-weight: 700;
+  color: var(--lime);
+  letter-spacing: 2px;
+}
+
+/* ─── Glass Card ───────────────────────────────────────────────── */
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 8px 32px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ─── Inputs ───────────────────────────────────────────────────── */
+input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 3px rgba(204, 255, 0, 0.1);
+}
+
+input::placeholder {
+  color: #444;
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  width: 100%;
+  background: var(--lime);
+  color: #111;
+  border: none;
+  padding: 13px 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 10px;
+  letter-spacing: 0.3px;
+  box-shadow: var(--lime-glow);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(204, 255, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  display: inline-block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--lime);
+  color: var(--lime);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 10px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-secondary:hover {
+  background: var(--lime-dim);
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.2);
+}
+
+/* ─── Separator ────────────────────────────────────────────────── */
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 10px;
+  color: var(--text-sec);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+/* ─── Lobby ────────────────────────────────────────────────────── */
+.lobby-card h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.code-display {
+  margin-bottom: 8px;
+}
+
+.code-display p {
+  color: var(--text-sec);
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+
+.big-code {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: var(--lime);
+  text-shadow: var(--lime-glow);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(204, 255, 0, 0.05);
+  border: 1px solid rgba(204, 255, 0, 0.15);
+  user-select: all;
+}
+
+/* ─── Player Grid ──────────────────────────────────────────────── */
+.player-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.player-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.3s;
+}
+
+.player-list li.is-current-turn {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 2px rgba(204, 255, 0, 0.15), var(--lime-glow);
+  animation: pulse-turn 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-turn {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(204, 255, 0, 0.15), 0 0 12px rgba(204, 255, 0, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(204, 255, 0, 0.3), 0 0 28px rgba(204, 255, 0, 0.5);
+  }
+}
+
+.player-avatar {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+/* ─── Note / Wait text ─────────────────────────────────────────── */
+.note {
+  color: var(--text-sec);
+  font-size: 0.85rem;
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ─── Game Layout ──────────────────────────────────────────────── */
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 600px) {
+  .game-layout {
+    grid-template-columns: 1fr 1.6fr;
+    grid-template-rows: auto auto;
+  }
+
+  .log-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ─── Secret / Role Card ───────────────────────────────────────── */
+.info-card {
+  text-align: center;
+}
+
+.info-card h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-sec);
+  margin-bottom: 16px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.role-badge.citizen {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.role-badge.imposter {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255, 59, 92, 0.3);
+}
+
+/* ─── Secret Word Card (Fingerprint Reveal) ────────────────────── */
+.secret-card {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.3s;
+  user-select: none;
+}
+
+.secret-card:hover {
+  border-color: rgba(204, 255, 0, 0.3);
+}
+
+.secret-card-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(18, 18, 18, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+
+.secret-card-blur.revealed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fingerprint-icon {
+  font-size: 2.4rem;
+  animation: fp-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fp-pulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.secret-card-blur span {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-sec);
+}
+
+.secret-word-inner {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.secret-word-inner p {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-sec);
+  margin-bottom: 8px;
+}
+
+.secret-word-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--lime);
+  text-shadow: var(--lime-glow);
+  letter-spacing: 1px;
+  animation: fadeInWord 0.5s ease forwards;
+}
+
+@keyframes fadeInWord {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Action Card ──────────────────────────────────────────────── */
+.action-card h3 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-sec);
+  margin-bottom: 16px;
+}
+
+.turn-waiting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--text-sec);
+  font-size: 0.9rem;
+}
+
+.turn-waiting-avatar {
+  font-size: 1.6rem;
+}
+
+/* ─── Word Input ───────────────────────────────────────────────── */
+.word-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.your-turn-label {
+  font-size: 0.85rem;
+  color: var(--lime);
+  letter-spacing: 0.5px;
+}
+
+.word-input input {
+  margin: 0;
+}
+
+.word-input button {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--lime);
+  color: #111;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--lime-glow);
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+
+.word-input button:hover {
+  box-shadow: 0 0 28px rgba(204, 255, 0, 0.5);
+}
+
+.word-input button:active {
+  transform: scale(0.98);
+}
+
+/* ─── Vote Grid ────────────────────────────────────────────────── */
+.vote-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.vote-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  padding: 14px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.vote-btn:hover {
+  border-color: var(--red);
+  background: var(--red-dim);
+  box-shadow: 0 0 12px rgba(255, 59, 92, 0.2);
+}
+
+.vote-avatar {
+  font-size: 1.6rem;
+}
+
+.skip-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px;
+  background: transparent;
+  color: var(--text-sec);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.skip-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.voted-msg {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--lime);
+  padding: 14px;
+  background: var(--lime-dim);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(204, 255, 0, 0.25);
+}
+
+/* ─── Game Log ─────────────────────────────────────────────────── */
+.log-window {
+  height: 140px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.82rem;
+  color: var(--text-sec);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.log-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.log-item:last-child {
+  border-bottom: none;
+  color: var(--text);
+}
+
+/* ─── Game Over Screen ─────────────────────────────────────────── */
+.ended-card h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.result-text {
+  font-size: 1rem;
+  color: var(--lime);
+  text-shadow: var(--lime-glow);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.results-list {
+  text-align: left;
+  margin: 16px 0;
+}
+
+.results-list h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-sec);
+  margin-bottom: 10px;
+}
+
+.results-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 3px solid transparent;
+}
+
+.result-item.IMPOSTER {
+  border-left-color: var(--red);
+}
+
+.result-item.CITIZEN {
+  border-left-color: var(--blue);
+}
+
+.result-avatar {
+  font-size: 1.6rem;
+}
+
+.name {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.word-reveal {
+  font-size: 0.8rem;
+  color: var(--text-sec);
+  flex: 1;
+}
+
+.role-tag {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.result-item.IMPOSTER .role-tag {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255, 59, 92, 0.3);
+}
+
+.result-item.CITIZEN .role-tag {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+/* ─── QR Code ──────────────────────────────────────────────────── */
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.qr-label {
+  font-size: 0.7rem;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.qr-wrapper {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(204, 255, 0, 0.2);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.1);
+}
+
+.qr-hint {
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.qr-hint strong {
+  color: var(--lime);
+}
+
+/* ─── Avatar Picker ────────────────────────────────────────────── */
+.avatar-preview {
+  font-size: 3.5rem;
+  text-align: center;
+  margin-bottom: 2px;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(204, 255, 0, 0.3));
+}
+
+.avatar-pick-label {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-sec);
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.avatar-btn {
+  font-size: 1.5rem;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  line-height: 1;
+}
+
+.avatar-btn:hover {
+  transform: scale(1.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.avatar-btn.selected {
+  border-color: var(--lime);
+  background: var(--lime-dim);
+  transform: scale(1.18);
+  box-shadow: var(--lime-glow);
+}
+
+/* inline avatar display */
+.player-avatar,
+.vote-avatar,
+.result-avatar {
+  margin-right: 6px;
+}
+
+/* ─── Countdown Ring ───────────────────────────────────────────── */
+.countdown-ring {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.countdown-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.countdown-ring.urgent {
+  animation: ring-urgent 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes ring-urgent {
+  from {
+    filter: drop-shadow(0 0 4px rgba(255, 68, 68, 0.4));
+    transform: scale(1);
+  }
+
+  to {
+    filter: drop-shadow(0 0 12px rgba(255, 68, 68, 0.8));
+    transform: scale(1.08);
+  }
+}
