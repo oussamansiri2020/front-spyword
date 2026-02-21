@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useSound } from './useSound';
 import './App.css';
 
-const socket = io('http://localhost:3000');
+const socket = io('http://162.19.231.154:3000');
 
 const AVATARS = ['🐺', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🦝', '🦄', '🐸',
   '🦉', '🐙', '🦋', '🦖', '🧙', '🤖', '👽', '🧛', '🥷', '🐲'];
