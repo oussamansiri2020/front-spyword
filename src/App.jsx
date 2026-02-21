@@ -4,7 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useSound } from './useSound';
 import './App.css';
 
-const socket = io('http://162.19.231.154:3000');
+const socket = io('http://localhost:3000');
 
 const AVATARS = ['🐺', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🦝', '🦄', '🐸',
   '🦉', '🐙', '🦋', '🦖', '🧙', '🤖', '👽', '🧛', '🥷', '🐲'];
@@ -25,6 +25,7 @@ function App() {
   const [wordRevealed, setWordRevealed] = useState(false);
   const [turnTimer, setTurnTimer] = useState(30);
   const [muted, setMuted] = useState(false);
+  const [playAgainReady, setPlayAgainReady] = useState({ ready: 0, total: 0 });
 
   const snd = useSound();
   const prevTurnPlayerRef = useRef(null);
@@ -54,8 +55,10 @@ function App() {
       setMyWord(word);
       setMyCategory(category);
       setWordRevealed(false);
+      setHasVoted(false);
       setPhase('PLAYING');
       setMessages([]);
+      setPlayAgainReady({ ready: 0, total: 0 });
       addLog('🎮 Game started! You are a ' + role);
       snd.gameStart();
     });
@@ -113,6 +116,7 @@ function App() {
       setPhase('ENDED');
       setNotification(`🏆 Winner: ${winner}`);
       if (players) setRoom(prev => ({ ...prev, players }));
+      setPlayAgainReady({ ready: 0, total: players ? players.length : 0 });
       if (winner === 'CITIZENS') {
         snd.citizensWin();
       } else if (winner === 'IMPOSTER') {
@@ -122,9 +126,13 @@ function App() {
       }
     });
 
+    socket.on('playAgainUpdate', ({ ready, total }) => {
+      setPlayAgainReady({ ready, total });
+    });
+
     return () => {
       ['updateRoom', 'error', 'gameStarted', 'turnUpdate', 'playerAction',
-        'phaseChange', 'roomCreated', 'voteUpdate', 'roundResult', 'gameOver', 'timerTick']
+        'phaseChange', 'roomCreated', 'voteUpdate', 'roundResult', 'gameOver', 'timerTick', 'playAgainUpdate']
         .forEach(e => socket.off(e));
     };
   }, []);
@@ -155,6 +163,11 @@ function App() {
     if (hasVoted) return;
     setHasVoted(true);
     socket.emit('vote', { roomId, suspectId: 'SKIP' });
+  };
+
+  const handlePlayAgain = () => {
+    snd.click();
+    socket.emit('playAgain', roomId);
   };
 
   const toggleMute = () => {
@@ -428,8 +441,8 @@ function App() {
               </ul>
             </div>
 
-            <button className="btn-primary" onClick={() => window.location.reload()}>
-              🔄 Play Again
+            <button className="btn-primary" onClick={handlePlayAgain}>
+              ▶ Play Again
             </button>
           </div>
         )}

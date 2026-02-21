@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Magnifying glass handle -->
+  <line x1="30" y1="72" x2="12" y2="90" stroke="#5DC614" stroke-width="10" stroke-linecap="round"/>
+  <!-- Outer ring of magnifying glass -->
+  <circle cx="52" cy="46" r="30" fill="none" stroke="#5DC614" stroke-width="10"/>
+  <!-- Inner green filled circle -->
+  <circle cx="52" cy="46" r="21" fill="#5DC614"/>
+  <!-- White ring inside -->
+  <circle cx="52" cy="46" r="16" fill="white"/>
+  <!-- Inner filled circle (dark) -->
+  <circle cx="52" cy="46" r="12" fill="#333333"/>
+  <!-- Question mark -->
+  <text x="52" y="53" text-anchor="middle" font-family="Arial Black, sans-serif" font-weight="900" font-size="16" fill="white">?</text>
+</svg>
