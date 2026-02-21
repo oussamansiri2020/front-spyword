@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import { QRCodeSVG } from 'qrcode.react';
+import { useSound } from './useSound';
 import './App.css';
 
 const socket = io('http://162.19.231.154:3000');
@@ -23,6 +24,10 @@ function App() {
   const [hasVoted, setHasVoted] = useState(false);
   const [wordRevealed, setWordRevealed] = useState(false);
   const [turnTimer, setTurnTimer] = useState(30);
+  const [muted, setMuted] = useState(false);
+
+  const snd = useSound();
+  const prevTurnPlayerRef = useRef(null);
 
   // Auto-fill room code from ?room= query param (QR scan)
   useEffect(() => {
@@ -33,7 +38,12 @@ function App() {
 
   useEffect(() => {
     socket.on('updateRoom', (r) => {
-      setRoom(r);
+      setRoom(prev => {
+        if (prev && prev.players && r.players && r.players.length > prev.players.length) {
+          snd.playerJoined();
+        }
+        return r;
+      });
       if (r.gameState === 'LOBBY') setPhase('LOBBY');
     });
 
@@ -47,23 +57,43 @@ function App() {
       setPhase('PLAYING');
       setMessages([]);
       addLog('🎮 Game started! You are a ' + role);
+      snd.gameStart();
     });
 
-    socket.on('turnUpdate', ({ currentPlayerId }) => setTurnPlayer(currentPlayerId));
+    socket.on('turnUpdate', ({ currentPlayerId }) => {
+      setTurnPlayer(prev => {
+        if (currentPlayerId === socket.id && prev !== socket.id) {
+          snd.yourTurn();
+        }
+        prevTurnPlayerRef.current = currentPlayerId;
+        return currentPlayerId;
+      });
+    });
 
     socket.on('playerAction', ({ username: u, action, payload }) => {
-      if (action === 'WORD') addLog(`${u}: "${payload}"`);
+      if (action === 'WORD') {
+        addLog(`${u}: "${payload}"`);
+        snd.wordSent();
+      }
     });
 
     socket.on('phaseChange', (p) => {
       setPhase(p);
       setHasVoted(false);
-      setTurnTimer(30); // Reset timer display on phase change
-      if (p === 'VOTING') addLog('🗳️ Voting phase! Who is the spy?');
-      else if (p === 'PLAYING') addLog('🔄 New round starting...');
+      setTurnTimer(30);
+      if (p === 'VOTING') {
+        addLog('🗳️ Voting phase! Who is the spy?');
+        snd.voting();
+      } else if (p === 'PLAYING') {
+        addLog('🔄 New round starting...');
+      }
     });
 
-    socket.on('timerTick', (remaining) => setTurnTimer(remaining));
+    socket.on('timerTick', (remaining) => {
+      setTurnTimer(remaining);
+      if (remaining <= 5) snd.timerTick(remaining);
+      if (remaining === 0) snd.timeUp();
+    });
 
     socket.on('roomCreated', (id) => { setRoomId(id); setPhase('LOBBY'); });
 
@@ -73,12 +103,23 @@ function App() {
     socket.on('roundResult', ({ message, role }) => {
       addLog(message + (role ? ` · ${role}` : ''));
       setNotification(message);
+      // Detect eliminations by checking for 'eliminated' keyword in message
+      if (message.toLowerCase().includes('eliminat') || message.toLowerCase().includes('kicked')) {
+        snd.eliminated();
+      }
     });
 
     socket.on('gameOver', ({ winner, players }) => {
       setPhase('ENDED');
       setNotification(`🏆 Winner: ${winner}`);
       if (players) setRoom(prev => ({ ...prev, players }));
+      if (winner === 'CITIZENS') {
+        snd.citizensWin();
+      } else if (winner === 'IMPOSTER') {
+        snd.imposterWins();
+      } else {
+        snd.imposterCaught();
+      }
     });
 
     return () => {
@@ -116,18 +157,48 @@ function App() {
     socket.emit('vote', { roomId, suspectId: 'SKIP' });
   };
 
+  const toggleMute = () => {
+    const next = !muted;
+    setMuted(next);
+    snd.setMuted(next);
+    if (!next) snd.click();
+  };
+
   return (
     <div className="app-container">
 
       {/* ── Top Bar ── */}
       <header>
         <h1>🕵️ SpyWord</h1>
-        {phase !== 'LOGIN' && (
-          <div className="room-badge">
-            Room&nbsp;<span className="highlight-code">{roomId}</span>
-            &nbsp;·&nbsp;{avatar}&nbsp;{username}
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {phase !== 'LOGIN' && (
+            <div className="room-badge">
+              Room&nbsp;<span className="highlight-code">{roomId}</span>
+              &nbsp;·&nbsp;{avatar}&nbsp;{username}
+            </div>
+          )}
+          <button
+            onClick={toggleMute}
+            title={muted ? 'Unmute sounds' : 'Mute sounds'}
+            style={{
+              background: 'none',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '50%',
+              width: 36,
+              height: 36,
+              cursor: 'pointer',
+              fontSize: '1.1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: muted ? 'var(--text-sec)' : 'var(--lime)',
+              flexShrink: 0,
+              transition: 'all 0.2s',
+            }}
+          >
+            {muted ? '🔇' : '🔊'}
+          </button>
+        </div>
       </header>
 
       <div className="main-content">
@@ -158,7 +229,7 @@ function App() {
 
             <div className="login-actions">
               <div className="separator">Create Room</div>
-              <button className="btn-primary" onClick={handleCreate}>+ Create Room</button>
+              <button className="btn-primary" onClick={() => { snd.click(); handleCreate(); }}>+ Create Room</button>
               <div className="separator">Join Existing</div>
               <input
                 placeholder="Enter room code"
@@ -167,7 +238,7 @@ function App() {
                 maxLength={6}
                 onKeyDown={e => e.key === 'Enter' && handleJoin()}
               />
-              <button className="btn-secondary" onClick={handleJoin}>Join Room →</button>
+              <button className="btn-secondary" onClick={() => { snd.click(); handleJoin(); }}>Join Room →</button>
             </div>
           </div>
         )}
@@ -210,7 +281,7 @@ function App() {
 
             {room.players.length >= 3 ? (
               socket.id === room.host
-                ? <button className="btn-primary" onClick={handleStart}>▶ Start Game</button>
+                ? <button className="btn-primary" onClick={() => { snd.click(); handleStart(); }}>▶ Start Game</button>
                 : <p className="note">Waiting for host to start…</p>
             ) : (
               <p className="note">Waiting for players… (min 3)</p>
